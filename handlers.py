@@ -11,20 +11,20 @@ def get_users_from_api(results: int, gender: str):
 
 def add_user_to_db(user_data: dict):
     user = pg_handler.add_user(dict(uuid=user_data['login']['uuid'],
-                                       cell=user_data['cell'],
-                                       dob_date=user_data['dob']['date'],
-                                       email=user_data['email'],
-                                       gender_m=True if user_data['gender'] == 'male' else False,
-                                       id_name=user_data['id']['name'],
-                                       id_value=user_data['id']['value'],
-                                       name_first=user_data['name']['first'],
-                                       name_last=user_data['name']['last'],
-                                       name_title=user_data['name']['title'],
-                                       nat=user_data['nat'],
-                                       phone=user_data['phone'],
-                                       picture_id=user_data['picture']['large'].split('/')[-1].replace('.jpg', ''),
-                                       registered_date=user_data['registered']['date']
-                                       ))
+                                    cell=user_data['cell'],
+                                    dob_date=user_data['dob']['date'],
+                                    email=user_data['email'],
+                                    gender_m=True if user_data['gender'] == 'male' else False,
+                                    id_name=user_data['id']['name'],
+                                    id_value=user_data['id']['value'],
+                                    name_first=user_data['name']['first'],
+                                    name_last=user_data['name']['last'],
+                                    name_title=user_data['name']['title'],
+                                    nat=user_data['nat'],
+                                    phone=user_data['phone'],
+                                    picture_id=user_data['picture']['large'].split('/')[-1].replace('.jpg', ''),
+                                    registered_date=user_data['registered']['date']
+                                    ))
     pg_handler.add_login(dict(md5=user_data['login']['md5'],
                               user_uuid=user_data['login']['uuid'],
                               password=user_data['login']['password'],
