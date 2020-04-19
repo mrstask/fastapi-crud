@@ -10,15 +10,13 @@ def get_users_from_api(results: int, gender: str):
 
 
 def add_user_to_db(user_data: dict):
-    user_id = pg_handler.add_user(dict(uuid=user_data['login']['uuid'],
+    user = pg_handler.add_user(dict(uuid=user_data['login']['uuid'],
                                        cell=user_data['cell'],
                                        dob_date=user_data['dob']['date'],
                                        email=user_data['email'],
                                        gender_m=True if user_data['gender'] == 'male' else False,
                                        id_name=user_data['id']['name'],
                                        id_value=user_data['id']['value'],
-                                       # location_id=location_id.location_id,
-                                       # login_id=login_id.login_id,
                                        name_first=user_data['name']['first'],
                                        name_last=user_data['name']['last'],
                                        name_title=user_data['name']['title'],
@@ -27,26 +25,26 @@ def add_user_to_db(user_data: dict):
                                        picture_id=user_data['picture']['large'].split('/')[-1].replace('.jpg', ''),
                                        registered_date=user_data['registered']['date']
                                        ))
-    login_id = pg_handler.add_login(dict(md5=user_data['login']['md5'],
-                                         user_uuid=user_data['login']['uuid'],
-                                         password=user_data['login']['password'],
-                                         salt=user_data['login']['salt'],
-                                         sha1=user_data['login']['sha1'],
-                                         sha256=user_data['login']['sha256'],
-                                         username=user_data['login']['username'])
-                                    )
-    location_id = pg_handler.add_location(dict(city=user_data['location']['city'],
-                                               user_uuid=user_data['login']['uuid'],
-                                               latitude=user_data['location']['coordinates']['latitude'],
-                                               longitude=user_data['location']['coordinates']['longitude'],
-                                               country=user_data['location']['country'],
-                                               state=user_data['location']['state'],
-                                               street_name=user_data['location']['street']['name'],
-                                               street_number=user_data['location']['street']['number'],
-                                               timezone_description=user_data['location']['timezone']['description'],
-                                               timezone_offset=user_data['location']['timezone']['offset']
-                                               ))
-    return user_id
+    pg_handler.add_login(dict(md5=user_data['login']['md5'],
+                              user_uuid=user_data['login']['uuid'],
+                              password=user_data['login']['password'],
+                              salt=user_data['login']['salt'],
+                              sha1=user_data['login']['sha1'],
+                              sha256=user_data['login']['sha256'],
+                              username=user_data['login']['username'])
+                         )
+    pg_handler.add_location(dict(city=user_data['location']['city'],
+                                 user_uuid=user_data['login']['uuid'],
+                                 latitude=user_data['location']['coordinates']['latitude'],
+                                 longitude=user_data['location']['coordinates']['longitude'],
+                                 country=user_data['location']['country'],
+                                 state=user_data['location']['state'],
+                                 street_name=user_data['location']['street']['name'],
+                                 street_number=user_data['location']['street']['number'],
+                                 timezone_description=user_data['location']['timezone']['description'],
+                                 timezone_offset=user_data['location']['timezone']['offset']
+                                 ))
+    return user.uuid
 
 
 def get_users_from_db():
@@ -61,14 +59,12 @@ def get_users_from_db():
 
 def get_user_by_uuid(uuid: str):
     user_data = pg_handler.get_user_by_uuid(uuid)
-    return normalize_result(user_data[0])
+    if user_data:
+        return normalize_result(user_data[0])
 
 
 def delete_user_from_db(user_uuid):
-    result = pg_handler.delete_user(user_uuid)
-    if result:
-        return f'User {user_uuid} deleted successfully'
-    return 'User not presented in database'
+    return pg_handler.delete_user(user_uuid)
 
 
 def normalize_result(user_data):

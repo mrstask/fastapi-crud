@@ -16,14 +16,14 @@ class PosgresHandler:
         user = self.get_user_by_uuid(data['uuid'])
         if user:
             return user
-        user_table = UserTable(**data)
-        self.session.add(user_table)
+        user = UserTable(**data)
+        self.session.add(user)
         try:
             self.session.commit()
         except InvalidRequestError:
             self.session.rollback()
             raise InvalidRequestError
-        return user_table
+        return user
 
     def get_users(self):
         users = self.session.query(UserTable, LoginTable, LocationTable).join(LoginTable).join(LocationTable).all()

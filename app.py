@@ -20,18 +20,25 @@ async def populate_users(quantity: int, male: bool):
 @app.get('/users/', summary='get all users', tags=['Users'])
 async def get_users():
     users_data = get_users_from_db()
+    if not users_data:
+        users_data = 'No users in database'
     return dict(users_data=users_data)
 
 
 @app.get('/users/{user_uuid}', summary='get user by user_uuid', tags=['Users'])
 async def get_user(user_uuid: str):
     user_data = get_user_by_uuid(user_uuid)
+    if not user_data:
+        user_data = 'Could not find user in database'
     return dict(user_data=user_data)
 
 
 @app.delete('/users/{user_uuid}', summary='delete user by user_uuid', tags=['Users'])
 async def delete_user(user_uuid: str):
-    return dict(result=delete_user_from_db(user_uuid))
+    result = delete_user_from_db(user_uuid)
+    if result:
+        return dict(message=f'User {user_uuid} deleted successfully')
+    return dict(message=f'User not presented in database')
 
 
 if __name__ == '__main__':
