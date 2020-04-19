@@ -1,0 +1,30 @@
+version: "3.5"
+services:
+  user-database:
+    restart: always
+    container_name: 'user_stat'
+    image: postgres
+    ports:
+      - '54320:5432'
+    env_file:
+      - .env
+    networks:
+      - user_stat
+
+  user-stat:
+    build: .
+    depends_on:
+      - user-database
+    restart: always
+    ports:
+      - '8023:8023'
+    tty: true
+    volumes:
+      - .:/app
+    stdin_open: true
+    networks:
+      - user_stat
+
+networks:
+  user_stat:
+    name: user_stat
