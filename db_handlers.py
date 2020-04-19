@@ -26,22 +26,13 @@ class PosgresHandler:
         return user_table
 
     def get_users(self):
-        users = self.session.query(UserTable, LoginTable, LocationTable).join(
-            LoginTable, UserTable.login_id == LoginTable.login_id).join(
-            LocationTable, UserTable.location_id == LocationTable.location_id).all()
+        users = self.session.query(UserTable, LoginTable, LocationTable).join(LoginTable).join(LocationTable).all()
         if users:
             return users
 
     def get_user_by_uuid(self, uuid: str):
-        user = self.session.query(UserTable, LoginTable, LocationTable).join(
-            LoginTable, UserTable.login_id == LoginTable.login_id).join(
-            LocationTable, UserTable.location_id == LocationTable.location_id).filter(
+        user = self.session.query(UserTable, LoginTable, LocationTable).join(LoginTable).join(LocationTable).filter(
             UserTable.uuid == uuid).all()
-        # self.session.query(TaskTable, JobTable, KeywordTable, StatusTable).join(
-        #             JobTable, TaskTable.task_id == JobTable.task_id).join(
-        #             KeywordTable, KeywordTable.keyword_id == TaskTable.keyword_id).join(
-        #             StatusTable, JobTable.status_id == StatusTable.status_id).filter(
-        #             TaskTable.site_id == domain_id).all()
         if user:
             return user
 
@@ -55,15 +46,13 @@ class PosgresHandler:
         return user
 
     def delete_user(self, uuid: int):
-        user = self.session.query(UserTable).filter_by(uuid=uuid).scalar()
-        if user:
-            try:
-                self.session.delete(user)
-                self.session.commit()
-                return True
-            except InvalidRequestError:
-                self.session.rollback()
-                raise InvalidRequestError
+        self.session.query(UserTable).filter(UserTable.uuid == uuid).delete()
+        try:
+            self.session.commit()
+            return True
+        except InvalidRequestError:
+            self.session.rollback()
+            raise InvalidRequestError
 
     # --------------------------------------------------LOCATIONS----------------------------------------------------
     def add_location(self, data: dict):

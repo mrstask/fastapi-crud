@@ -17,6 +17,7 @@ class LocationTable(Base):
     __tablename__ = 'locations'
     location_id = Column(Integer, primary_key=True, autoincrement=True)
     user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid', ondelete='CASCADE'))
+    users = relationship("UserTable", back_populates="locations")
     city = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
@@ -33,12 +34,24 @@ class LoginTable(Base):
     __tablename__ = 'logins'
     login_id = Column(Integer, primary_key=True, autoincrement=True)
     user_uuid = Column(UUID(as_uuid=True), ForeignKey('users.uuid', ondelete='CASCADE'))
+    users = relationship("UserTable", back_populates="logins")
     md5 = Column(String)
     password = Column(String)
     salt = Column(String)
     sha1 = Column(String)
     sha256 = Column(String)
     username = Column(String)
+
+# class Parent(Base):
+#     __tablename__ = 'parent'
+#     id = Column(Integer, primary_key=True)
+#     child = relationship("Child", uselist=False, back_populates="parent")
+#
+# class Child(Base):
+#     __tablename__ = 'child'
+#     id = Column(Integer, primary_key=True)
+#     parent_id = Column(Integer, ForeignKey('parent.id'))
+#     parent = relationship("Parent", back_populates="child")
 
 
 class UserTable(Base):
@@ -51,8 +64,10 @@ class UserTable(Base):
     id_name = Column(String)
     id_value = Column(String)
 
-    location = relationship(LocationTable, backref="users", passive_deletes=True)
-    login = relationship(LoginTable, backref="users", passive_deletes=True)
+    # location = relationship(LocationTable, backref="UserTable", passive_deletes=True)
+    locations = relationship("LocationTable", uselist=False, back_populates="users")
+    logins = relationship("LoginTable", uselist=False, back_populates="users")
+    # login = relationship(LoginTable, backref="UserTable", passive_deletes=True)
     name_first = Column(String)
     name_last = Column(String)
     name_title = Column(String)
