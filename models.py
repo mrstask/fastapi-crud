@@ -42,17 +42,6 @@ class LoginTable(Base):
     sha256 = Column(String)
     username = Column(String)
 
-# class Parent(Base):
-#     __tablename__ = 'parent'
-#     id = Column(Integer, primary_key=True)
-#     child = relationship("Child", uselist=False, back_populates="parent")
-#
-# class Child(Base):
-#     __tablename__ = 'child'
-#     id = Column(Integer, primary_key=True)
-#     parent_id = Column(Integer, ForeignKey('parent.id'))
-#     parent = relationship("Parent", back_populates="child")
-
 
 class UserTable(Base):
     __tablename__ = 'users'
@@ -63,11 +52,8 @@ class UserTable(Base):
     gender_m = Column(Boolean)
     id_name = Column(String)
     id_value = Column(String)
-
-    # location = relationship(LocationTable, backref="UserTable", passive_deletes=True)
     locations = relationship("LocationTable", uselist=False, back_populates="users")
     logins = relationship("LoginTable", uselist=False, back_populates="users")
-    # login = relationship(LoginTable, backref="UserTable", passive_deletes=True)
     name_first = Column(String)
     name_last = Column(String)
     name_title = Column(String)

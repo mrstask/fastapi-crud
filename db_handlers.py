@@ -36,15 +36,6 @@ class PosgresHandler:
         if user:
             return user
 
-    def update_user(self, uuid: str, user_data: dict):
-        user = self.session.query(UserTable).filter_by(uuid=uuid).update(user_data)
-        try:
-            self.session.commit()
-        except InvalidRequestError:
-            self.session.rollback()
-            raise InvalidRequestError
-        return user
-
     def delete_user(self, uuid: int):
         self.session.query(UserTable).filter(UserTable.uuid == uuid).delete()
         try:
@@ -70,15 +61,6 @@ class PosgresHandler:
         if location:
             return location
 
-    def update_location(self, location_id: int, location_data: dict):
-        location = self.session.query(LocationTable).filter_by(location_id=location_id).update(location_data)
-        try:
-            self.session.commit()
-        except InvalidRequestError:
-            self.session.rollback()
-            raise InvalidRequestError
-        return location
-
     # --------------------------------------------------LOGIN----------------------------------------------------
     def add_login(self, data: dict):
         login_table = LoginTable(**data)
@@ -94,15 +76,6 @@ class PosgresHandler:
         login = self.session.query(LoginTable).filter_by(login_id=login_id).scalar()
         if login:
             return login
-
-    def update_login(self, login_id: int, login_data: dict):
-        login = self.session.query(LoginTable).filter_by(login_id=login_id).update(login_data)
-        try:
-            self.session.commit()
-        except InvalidRequestError:
-            self.session.rollback()
-            raise InvalidRequestError
-        return login
 
 
 pg_handler = PosgresHandler(PostgresConfiguration().postgres_db_path)
